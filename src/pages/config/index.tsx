@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Content from "@/components/Config/content";
+import Content from "@/components/Config";
 
 
 function Config({ isPhone, theme }: any) {

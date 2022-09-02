@@ -8,6 +8,7 @@ import {
   Space,
   Dropdown,
   Menu,
+  PageHeader,
   Typography,
   Input,
   Tooltip,
@@ -26,12 +27,9 @@ import {
   PlayCircleOutlined,
 } from '@ant-design/icons';
 import config from '@/utils/config';
-import { PageContainer } from '@ant-design/pro-layout';
 import { request } from '@/utils/http';
 import SubscriptionModal from './modal';
 import { getTableScroll } from '@/utils/index';
-import { history } from 'umi';
-import './index.less';
 import SubscriptionLogModal from './logModal';
 
 const { Text, Paragraph } = Typography;
@@ -57,7 +55,7 @@ export enum SubscriptionType {
   'file' = '单文件',
 }
 
-const Subscription = ({ headerStyle, isPhone, socketMessage }: any) => {
+function Subscription({ headerStyle, isPhone, socketMessage }: any) {
   const columns: any = [
     {
       title: '名称',
@@ -157,22 +155,22 @@ const Subscription = ({ headerStyle, isPhone, socketMessage }: any) => {
         <>
           {(!record.is_disabled ||
             record.status !== SubscriptionStatus.idle) && (
-            <>
-              {record.status === SubscriptionStatus.idle && (
-                <Tag icon={<ClockCircleOutlined />} color="default">
-                  空闲中
-                </Tag>
-              )}
-              {record.status === SubscriptionStatus.running && (
-                <Tag
-                  icon={<Loading3QuartersOutlined spin />}
-                  color="processing"
-                >
-                  运行中
-                </Tag>
-              )}
-            </>
-          )}
+              <>
+                {record.status === SubscriptionStatus.idle && (
+                  <Tag icon={<ClockCircleOutlined />} color="default">
+                    空闲中
+                  </Tag>
+                )}
+                {record.status === SubscriptionStatus.running && (
+                  <Tag
+                    icon={<Loading3QuartersOutlined spin />}
+                    color="processing"
+                  >
+                    运行中
+                  </Tag>
+                )}
+              </>
+            )}
           {record.is_disabled === 1 &&
             record.status === SubscriptionStatus.idle && (
               <Tag icon={<CloseCircleOutlined />} color="error">
@@ -391,8 +389,7 @@ const Subscription = ({ headerStyle, isPhone, socketMessage }: any) => {
       onOk() {
         request
           .put(
-            `${config.apiPrefix}subscriptions/${
-              record.is_disabled === 1 ? 'enable' : 'disable'
+            `${config.apiPrefix}subscriptions/${record.is_disabled === 1 ? 'enable' : 'disable'
             }`,
             {
               data: [record.id],
@@ -481,7 +478,7 @@ const Subscription = ({ headerStyle, isPhone, socketMessage }: any) => {
     }
   };
 
-  const onSearch = (value: string) => {
+  const handleSearch = (value: string) => {
     setSearchText(value.trim());
   };
 
@@ -547,27 +544,25 @@ const Subscription = ({ headerStyle, isPhone, socketMessage }: any) => {
   }, []);
 
   return (
-    <PageContainer
-      className="ql-container-wrapper subscriptiontab-wrapper"
+    <PageHeader
       title="订阅管理"
       extra={[
-        <Search
-          placeholder="请输入名称或者关键词"
-          style={{ width: 'auto' }}
-          enterButton
-          allowClear
+        <Input.Search
+          allowClear={true}
+          enterButton={true}
           loading={loading}
+          placeholder="请输入名称或者关键词"
           value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}
-          onSearch={onSearch}
+          onSearch={handleSearch}
         />,
-        <Button key="2" type="primary" onClick={() => addSubscription()}>
+        <Button
+          type="primary"
+          onClick={() => addSubscription()}
+        >
           新建订阅
         </Button>,
       ]}
-      header={{
-        style: headerStyle,
-      }}
     >
       <Table
         columns={columns}
@@ -601,7 +596,7 @@ const Subscription = ({ headerStyle, isPhone, socketMessage }: any) => {
         }}
         subscription={logSubscription}
       />
-    </PageContainer>
+    </PageHeader>
   );
 };
 

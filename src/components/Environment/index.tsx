@@ -567,7 +567,7 @@ const Content = ({ isPhone, theme }: any) => {
           />
         </Col>
       </Row>
-    </PageHeader>
+    </PageHeader >
   );
 };
 

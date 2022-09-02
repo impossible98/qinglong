@@ -27,7 +27,7 @@ export default {
       {
         path: '/subscription',
         name: '订阅管理',
-        component: '@/pages/subscription/index',
+        component: '@/pages/Subscription/index',
       },
       {
         name: '环境变量',
