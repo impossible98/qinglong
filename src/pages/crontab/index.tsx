@@ -1,4 +1,4 @@
-import React, { PureComponent, Fragment, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Button,
   message,
@@ -9,6 +9,7 @@ import {
   Tooltip,
   Dropdown,
   Menu,
+  PageHeader,
   Typography,
   Input,
   Popover,
@@ -30,7 +31,6 @@ import {
   PushpinOutlined,
 } from '@ant-design/icons';
 import config from '@/utils/config';
-import { PageContainer } from '@ant-design/pro-layout';
 import { request } from '@/utils/http';
 import CronModal, { CronLabelModal } from './modal';
 import CronLogModal from './logModal';
@@ -41,8 +41,9 @@ import { getTableScroll } from '@/utils/index';
 import { history } from 'umi';
 import './index.less';
 
-const { Text, Paragraph } = Typography;
 const { Search } = Input;
+const { TabPane } = Tabs;
+const { Text, Paragraph } = Typography;
 
 export enum CrontabStatus {
   'running',
@@ -182,10 +183,10 @@ const Crontab = ({ headerStyle, isPhone, theme }: any) => {
           >
             {record.last_execution_time
               ? new Date(record.last_execution_time * 1000)
-                  .toLocaleString(language, {
-                    hour12: false,
-                  })
-                  .replace(' 24:', ' 00:')
+                .toLocaleString(language, {
+                  hour12: false,
+                })
+                .replace(' 24:', ' 00:')
               : '-'}
           </span>
         );
@@ -534,8 +535,7 @@ const Crontab = ({ headerStyle, isPhone, theme }: any) => {
       onOk() {
         request
           .put(
-            `${config.apiPrefix}crons/${
-              record.isDisabled === 1 ? 'enable' : 'disable'
+            `${config.apiPrefix}crons/${record.isDisabled === 1 ? 'enable' : 'disable'
             }`,
             {
               data: [record.id],
@@ -580,8 +580,7 @@ const Crontab = ({ headerStyle, isPhone, theme }: any) => {
       onOk() {
         request
           .put(
-            `${config.apiPrefix}crons/${
-              record.isPinned === 1 ? 'unpin' : 'pin'
+            `${config.apiPrefix}crons/${record.isPinned === 1 ? 'unpin' : 'pin'
             }`,
             {
               data: [record.id],
@@ -910,13 +909,14 @@ const Crontab = ({ headerStyle, isPhone, theme }: any) => {
   );
 
   return (
-    <PageContainer
-      className="ql-container-wrapper crontab-wrapper"
+    <PageHeader
       title="定时任务"
       extra={[
         <Search
           placeholder="请输入名称或者关键词"
-          style={{ width: 'auto' }}
+          style={{
+            width: 'auto'
+          }}
           enterButton
           allowClear
           loading={loading}
@@ -924,23 +924,23 @@ const Crontab = ({ headerStyle, isPhone, theme }: any) => {
           onChange={(e) => setSearchValue(e.target.value)}
           onSearch={onSearch}
         />,
-        <Button key="2" type="primary" onClick={() => addCron()}>
+        <Button
+          key="2"
+          type="primary"
+          onClick={addCron}>
           新建任务
         </Button>,
       ]}
-      header={{
-        style: headerStyle,
-      }}
     >
       <Tabs
-        defaultActiveKey="all"
-        size="small"
-        tabPosition="top"
-        className="crontab-view"
+        defaultActiveKey="1"
       >
-        <Tabs.TabPane tab="全部任务" key="all">
+        <TabPane
+          key="1"
+          tab="全部任务"
+        >
           {panelContent}
-        </Tabs.TabPane>
+        </TabPane>
       </Tabs>
       <CronLogModal
         visible={isLogModalVisible}
@@ -974,7 +974,7 @@ const Crontab = ({ headerStyle, isPhone, theme }: any) => {
         theme={theme}
         isPhone={isPhone}
       />
-    </PageContainer>
+    </PageHeader>
   );
 };
 

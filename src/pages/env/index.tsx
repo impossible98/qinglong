@@ -6,6 +6,7 @@ import {
   Table,
   Tag,
   Space,
+  PageHeader,
   Typography,
   Tooltip,
   Input,
@@ -13,12 +14,10 @@ import {
 import {
   EditOutlined,
   DeleteOutlined,
-  SyncOutlined,
   CheckCircleOutlined,
   StopOutlined,
 } from '@ant-design/icons';
 import config from '@/utils/config';
-import { PageContainer } from '@ant-design/pro-layout';
 import { request } from '@/utils/http';
 import EnvModal from './modal';
 import EditNameModal from './editNameModal';
@@ -274,8 +273,7 @@ const Env = ({ headerStyle, isPhone, theme }: any) => {
       onOk() {
         request
           .put(
-            `${config.apiPrefix}envs/${
-              record.status === Status.已禁用 ? 'enable' : 'disable'
+            `${config.apiPrefix}envs/${record.status === Status.已禁用 ? 'enable' : 'disable'
             }`,
             {
               data: [record.id],
@@ -488,8 +486,7 @@ const Env = ({ headerStyle, isPhone, theme }: any) => {
   }, []);
 
   return (
-    <PageContainer
-      className="ql-container-wrapper env-wrapper"
+    <PageHeader
       title="环境变量"
       extra={[
         <Search
@@ -499,58 +496,57 @@ const Env = ({ headerStyle, isPhone, theme }: any) => {
           loading={loading}
           onSearch={onSearch}
         />,
-        <Button key="2" type="primary" onClick={() => addEnv()}>
+        <Button key="2" type="primary" onClick={addEnv}>
           新建变量
         </Button>,
       ]}
-      header={{
-        style: headerStyle,
-      }}
     >
-      {selectedRowIds.length > 0 && (
-        <div style={{ marginBottom: 16 }}>
-          <Button
-            type="primary"
-            style={{ marginBottom: 5 }}
-            onClick={modifyName}
-          >
-            批量修改变量名称
-          </Button>
-          <Button
-            type="primary"
-            style={{ marginBottom: 5, marginLeft: 8 }}
-            onClick={delEnvs}
-          >
-            批量删除
-          </Button>
-          <Button
-            type="primary"
-            onClick={() => exportEnvs()}
-            style={{ marginLeft: 8, marginRight: 8 }}
-          >
-            批量导出
-          </Button>
-          <Button
-            type="primary"
-            onClick={() => operateEnvs(0)}
-            style={{ marginLeft: 8, marginBottom: 5 }}
-          >
-            批量启用
-          </Button>
-          <Button
-            type="primary"
-            onClick={() => operateEnvs(1)}
-            style={{ marginLeft: 8, marginRight: 8 }}
-          >
-            批量禁用
-          </Button>
-          <span style={{ marginLeft: 8 }}>
-            已选择
-            <a>{selectedRowIds?.length}</a>项
-          </span>
-        </div>
-      )}
-      <DndProvider backend={HTML5Backend}>
+      {selectedRowIds.length > 0
+        && (
+          <div style={{ marginBottom: 16 }}>
+            <Button
+              type="primary"
+              style={{ marginBottom: 5 }}
+              onClick={modifyName}
+            >
+              批量修改变量名称
+            </Button>
+            <Button
+              type="primary"
+              style={{ marginBottom: 5, marginLeft: 8 }}
+              onClick={delEnvs}
+            >
+              批量删除
+            </Button>
+            <Button
+              type="primary"
+              onClick={() => exportEnvs()}
+              style={{ marginLeft: 8, marginRight: 8 }}
+            >
+              批量导出
+            </Button>
+            <Button
+              type="primary"
+              onClick={() => operateEnvs(0)}
+              style={{ marginLeft: 8, marginBottom: 5 }}
+            >
+              批量启用
+            </Button>
+            <Button
+              type="primary"
+              onClick={() => operateEnvs(1)}
+              style={{ marginLeft: 8, marginRight: 8 }}
+            >
+              批量禁用
+            </Button>
+            <span style={{ marginLeft: 8 }}>
+              已选择
+              <a>{selectedRowIds?.length}</a>项
+            </span>
+          </div>
+        )}
+      <DndProvider
+        backend={HTML5Backend}>
         <Table
           columns={columns}
           rowSelection={rowSelection}
@@ -579,7 +575,7 @@ const Env = ({ headerStyle, isPhone, theme }: any) => {
         handleCancel={handleEditNameCancel}
         ids={selectedRowIds}
       />
-    </PageContainer>
+    </PageHeader>
   );
 };
 
