@@ -28,7 +28,6 @@ import SecuritySettings from './security';
 import LoginLog from './loginLog';
 import NotificationSetting from './notification';
 import CheckUpdate from './checkUpdate';
-import About from './about';
 
 const { Text } = Typography;
 const optionsWithDisabled = [
@@ -392,9 +391,6 @@ const Setting = ({
               <CheckUpdate socketMessage={socketMessage} />
             </Form.Item>
           </Form>
-        </Tabs.TabPane>
-        <Tabs.TabPane tab="关于" key="about">
-          <About />
         </Tabs.TabPane>
       </Tabs>
       <AppModal

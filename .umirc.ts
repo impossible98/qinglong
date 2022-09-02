@@ -1,5 +1,5 @@
 import { defineConfig } from 'umi';
-const CompressionPlugin = require('compression-webpack-plugin');
+import CompressionPlugin from 'compression-webpack-plugin';
 
 export default defineConfig({
   hash: true,

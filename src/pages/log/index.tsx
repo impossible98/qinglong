@@ -1,10 +1,10 @@
-import { useState, useEffect, useCallback, Key, useRef } from 'react';
+import React, { useState, useEffect, useCallback, Key, useRef } from 'react';
 import { TreeSelect, Tree, Input, Empty } from 'antd';
 import config from '@/utils/config';
 import { PageContainer } from '@ant-design/pro-layout';
 import Editor from '@monaco-editor/react';
 import { request } from '@/utils/http';
-import styles from './index.module.less';
+import styles from './index.less';
 import { Controlled as CodeMirror } from 'react-codemirror2';
 import SplitPane from 'react-split-pane';
 
@@ -36,7 +36,13 @@ function getFilterData(keyword: string, data: any) {
   return { tree: data, expandedKeys };
 }
 
-const Log = ({ headerStyle, isPhone, theme }: any) => {
+interface LogProps {
+  headerStyle?: React.CSSProperties;
+  isPhone?: boolean;
+  theme?: string;
+}
+
+function Log({ headerStyle, isPhone, theme }: LogProps) {
   const [title, setTitle] = useState('请选择日志文件');
   const [value, setValue] = useState('请选择日志文件');
   const [select, setSelect] = useState<any>();
@@ -192,7 +198,7 @@ const Log = ({ headerStyle, isPhone, theme }: any) => {
             onBeforeChange={(editor, data, value) => {
               setValue(value);
             }}
-            onChange={(editor, data, value) => {}}
+            onChange={(editor, data, value) => { }}
           />
         )}
       </div>

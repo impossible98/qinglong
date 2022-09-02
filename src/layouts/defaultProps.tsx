@@ -1,14 +1,5 @@
-import {
-  FormOutlined,
-  FieldTimeOutlined,
-  DiffOutlined,
-  SettingOutlined,
-  CodeOutlined,
-  FolderOutlined,
-  RadiusSettingOutlined,
-  ControlOutlined,
-  ContainerOutlined,
-} from '@ant-design/icons';
+import { DifferenceSet, Info, Install, Log, Setting } from '@icon-park/react';
+import '@icon-park/react/styles/index.css';
 import IconFont from '@/components/iconfont';
 
 export default {
@@ -36,7 +27,7 @@ export default {
         path: '/crontab',
         name: '定时任务',
         icon: <IconFont type="ql-icon-crontab" />,
-        component: '@/pages/crontab/index',
+        component: '@/pages/Crontab/index',
       },
       {
         path: '/subscription',
@@ -65,26 +56,32 @@ export default {
       {
         path: '/dependence',
         name: '依赖管理',
-        icon: <IconFont type="ql-icon-dependence" />,
+        icon: <Install theme="outline" size="16" fill="#333" />,
         component: '@/pages/dependence/index',
       },
       {
         path: '/diff',
         name: '对比工具',
-        icon: <IconFont type="ql-icon-diff" />,
+        icon: <DifferenceSet theme="outline" size="16" fill="#333" />,
         component: '@/pages/diff/index',
       },
       {
         path: '/log',
         name: '任务日志',
-        icon: <IconFont type="ql-icon-log" />,
-        component: '@/pages/log/index',
+        icon: <Log theme="outline" size="16" fill="#333" />,
+        component: '@/pages/Log/index',
       },
       {
         path: '/setting',
         name: '系统设置',
-        icon: <SettingOutlined />,
+        icon: <Setting theme="outline" size="16" fill="#333" />,
         component: '@/pages/password/index',
+      },
+      {
+        path: '/about',
+        name: '关于',
+        icon: <Info theme="outline" size="16" fill="#333" />,
+        component: '@/pages/About/index',
       },
     ],
   },
