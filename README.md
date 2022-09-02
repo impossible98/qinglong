@@ -26,6 +26,16 @@
 
 简体中文 | [English](./README-en.md)
 
+## Docker
+
+```bash
+docker run -d \
+    -p 5700:5700 \
+    --name qinglong \
+    --restart unless-stopped \
+    whyour/qinglong:latest
+```
+
 ## 功能
 
 - 支持多种脚本语言（python3、javaScript、shell、typescript）

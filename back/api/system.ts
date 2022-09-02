@@ -1,17 +1,19 @@
+// import built-in modules
+import fs from 'fs';
+// import third-party modules
+import { celebrate, Joi } from 'celebrate';
 import { Router, Request, Response, NextFunction } from 'express';
 import { Container } from 'typedi';
 import { Logger } from 'winston';
-import * as fs from 'fs';
+// import local modules
 import config from '../config';
 import SystemService from '../services/system';
-import { celebrate, Joi } from 'celebrate';
 import UserService from '../services/user';
 import { EnvModel } from '../data/env';
 const route = Router();
 
 export default (app: Router) => {
   app.use('/system', route);
-
   route.get('/', async (req: Request, res: Response, next: NextFunction) => {
     const logger: Logger = Container.get('logger');
     try {
