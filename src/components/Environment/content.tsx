@@ -1,30 +1,27 @@
 import React, { useCallback, useRef, useState, useEffect } from 'react';
 import {
   Button,
-  message,
+  Col,
+  Input,
   Modal,
+  PageHeader,
+  Row,
+  Space,
   Table,
   Tag,
-  Space,
-  PageHeader,
-  Typography,
   Tooltip,
-  Input,
+  Typography,
 } from 'antd';
-import {
-  EditOutlined,
-  DeleteOutlined,
-  CheckCircleOutlined,
-  StopOutlined,
-} from '@ant-design/icons';
-import config from '@/utils/config';
-import { request } from '@/utils/http';
-import EnvModal from './modal';
-import EditNameModal from './editNameModal';
+import { CheckOne, Delete, Edit, Forbid } from '@icon-park/react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import './index.less';
+// import local modules
 import { exportJson, getTableScroll } from '@/utils/index';
+import config from '@/utils/config';
+import { request } from '@/utils/http';
+import notify from "@/utils/notification";
+import EnvModal from './modal';
+import './content.less';
 
 const { Text, Paragraph } = Typography;
 const { Search } = Input;
@@ -95,30 +92,28 @@ const DragableBodyRow = ({
   );
 };
 
-const Env = ({ headerStyle, isPhone, theme }: any) => {
+const Content = ({ isPhone, theme }: any) => {
   const columns: any = [
     {
+      align: 'center',
       title: '序号',
-      align: 'center' as const,
-      width: 60,
-      render: (text: string, record: any, index: number) => {
+      render: (_text: string, _record: any, index: number) => {
         return <span style={{ cursor: 'text' }}>{index + 1} </span>;
       },
     },
     {
-      title: '名称',
+      align: 'center',
       dataIndex: 'name',
       key: 'name',
-      align: 'center' as const,
+      title: '名称',
       sorter: (a: any, b: any) => a.name.localeCompare(b.name),
     },
     {
-      title: '值',
+      align: 'center',
       dataIndex: 'value',
       key: 'value',
-      align: 'center' as const,
-      width: '35%',
-      render: (text: string, record: any) => {
+      title: '值',
+      render: (text: string, _record: any) => {
         return (
           <Paragraph
             style={{
@@ -134,17 +129,17 @@ const Env = ({ headerStyle, isPhone, theme }: any) => {
       },
     },
     {
+      align: 'center',
+      dataIndex: 'remark',
+      key: 'remark',
       title: '备注',
-      dataIndex: 'remarks',
-      key: 'remarks',
-      align: 'center' as const,
+
     },
     {
-      title: '更新时间',
+      align: 'center',
       dataIndex: 'timestamp',
       key: 'timestamp',
-      align: 'center' as const,
-      width: 165,
+      title: '更新时间',
       ellipsis: {
         showTitle: false,
       },
@@ -155,7 +150,7 @@ const Env = ({ headerStyle, isPhone, theme }: any) => {
           return updatedAtA - updatedAtB;
         },
       },
-      render: (text: string, record: any) => {
+      render: (_text: string, record: any) => {
         const language = navigator.language || navigator.languages[0];
         const time = record.updatedAt || record.timestamp;
         const date = new Date(time)
@@ -175,11 +170,10 @@ const Env = ({ headerStyle, isPhone, theme }: any) => {
       },
     },
     {
-      title: '状态',
-      key: 'status',
+      align: 'center',
       dataIndex: 'status',
-      align: 'center' as const,
-      width: 70,
+      key: 'status',
+      title: '状态',
       filters: [
         {
           text: '已启用',
@@ -191,7 +185,7 @@ const Env = ({ headerStyle, isPhone, theme }: any) => {
         },
       ],
       onFilter: (value: number, record: any) => record.status === value,
-      render: (text: string, record: any, index: number) => {
+      render: (_text: string, record: any, _index: number) => {
         return (
           <Space size="middle" style={{ cursor: 'text' }}>
             <Tag color={StatusColor[record.status]} style={{ marginRight: 0 }}>
@@ -202,17 +196,16 @@ const Env = ({ headerStyle, isPhone, theme }: any) => {
       },
     },
     {
-      title: '操作',
+      align: 'center',
       key: 'action',
-      width: 120,
-      align: 'center' as const,
-      render: (text: string, record: any, index: number) => {
+      title: '操作',
+      render: (_text: string, record: any, index: number) => {
         const isPc = !isPhone;
         return (
           <Space size="middle">
             <Tooltip title={isPc ? '编辑' : ''}>
               <a onClick={() => editEnv(record, index)}>
-                <EditOutlined />
+                <Edit theme="outline" size="16" fill="#333" />
               </a>
             </Tooltip>
             <Tooltip
@@ -222,15 +215,15 @@ const Env = ({ headerStyle, isPhone, theme }: any) => {
             >
               <a onClick={() => enabledOrDisabledEnv(record, index)}>
                 {record.status === Status.已禁用 ? (
-                  <CheckCircleOutlined />
+                  <CheckOne theme="outline" size="16" fill="#333" />
                 ) : (
-                  <StopOutlined />
+                  <Forbid theme="outline" size="16" fill="#333" />
                 )}
               </a>
             </Tooltip>
             <Tooltip title={isPc ? '删除' : ''}>
               <a onClick={() => deleteEnv(record, index)}>
-                <DeleteOutlined />
+                <Delete theme="outline" size="16" fill="#333" />
               </a>
             </Tooltip>
           </Space>
@@ -257,12 +250,16 @@ const Env = ({ headerStyle, isPhone, theme }: any) => {
       .finally(() => setLoading(false));
   };
 
-  const enabledOrDisabledEnv = (record: any, index: number) => {
+  function enabledOrDisabledEnv(record: any, index: number) {
     Modal.confirm({
-      title: `确认${record.status === Status.已禁用 ? '启用' : '禁用'}`,
+      title: `确认${record.status === Status.已禁用
+        ? '启用' :
+        '禁用'}`,
       content: (
         <>
-          确认{record.status === Status.已禁用 ? '启用' : '禁用'}
+          确认{record.status === Status.已禁用
+            ? '启用'
+            : '禁用'}
           Env{' '}
           <Text style={{ wordBreak: 'break-all' }} type="warning">
             {record.value}
@@ -273,7 +270,9 @@ const Env = ({ headerStyle, isPhone, theme }: any) => {
       onOk() {
         request
           .put(
-            `${config.apiPrefix}envs/${record.status === Status.已禁用 ? 'enable' : 'disable'
+            `${config.apiPrefix}envs/${record.status === Status.已禁用
+              ? 'enable' :
+              'disable'
             }`,
             {
               data: [record.id],
@@ -281,7 +280,7 @@ const Env = ({ headerStyle, isPhone, theme }: any) => {
           )
           .then((data: any) => {
             if (data.code === 200) {
-              message.success(
+              notify(
                 `${record.status === Status.已禁用 ? '启用' : '禁用'}成功`,
               );
               const newStatus =
@@ -293,7 +292,7 @@ const Env = ({ headerStyle, isPhone, theme }: any) => {
               });
               setValue(result);
             } else {
-              message.error(data);
+              notify(data);
             }
           });
       },
@@ -303,12 +302,12 @@ const Env = ({ headerStyle, isPhone, theme }: any) => {
     });
   };
 
-  const addEnv = () => {
+  const handleClick = () => {
     setEditedEnv(null as any);
     setIsModalVisible(true);
   };
 
-  const editEnv = (record: any, index: number) => {
+  const editEnv = (record: any, _index: number) => {
     setEditedEnv(record);
     setIsModalVisible(true);
   };
@@ -330,12 +329,12 @@ const Env = ({ headerStyle, isPhone, theme }: any) => {
           .delete(`${config.apiPrefix}envs`, { data: [record.id] })
           .then((data: any) => {
             if (data.code === 200) {
-              message.success('删除成功');
+              notify('删除成功');
               const result = [...value];
               result.splice(index, 1);
               setValue(result);
             } else {
-              message.error(data);
+              notify(data);
             }
           });
       },
@@ -350,7 +349,7 @@ const Env = ({ headerStyle, isPhone, theme }: any) => {
     env && handleEnv(env);
   };
 
-  const handleEditNameCancel = (env?: any[]) => {
+  const handleEditNameCancel = (_env?: any[]) => {
     setIsEditNameModalVisible(false);
     getEnvs();
   };
@@ -392,7 +391,7 @@ const Env = ({ headerStyle, isPhone, theme }: any) => {
             newData.splice(hoverIndex, 0, { ...dragRow, ...data.data });
             setValue([...newData]);
           } else {
-            message.error(data);
+            notify(data);
           }
         });
     },
@@ -414,7 +413,7 @@ const Env = ({ headerStyle, isPhone, theme }: any) => {
     onChange: onSelectChange,
   };
 
-  const delEnvs = () => {
+  const deleteEnvs = () => {
     Modal.confirm({
       title: '确认删除',
       content: <>确认删除选中的变量吗</>,
@@ -423,11 +422,11 @@ const Env = ({ headerStyle, isPhone, theme }: any) => {
           .delete(`${config.apiPrefix}envs`, { data: selectedRowIds })
           .then((data: any) => {
             if (data.code === 200) {
-              message.success('批量删除成功');
+              notify('批量删除成功');
               setSelectedRowIds([]);
               getEnvs();
             } else {
-              message.error(data);
+              notify(data);
             }
           });
       },
@@ -450,7 +449,7 @@ const Env = ({ headerStyle, isPhone, theme }: any) => {
             if (data.code === 200) {
               getEnvs();
             } else {
-              message.error(data);
+              notify(data);
             }
           });
       },
@@ -465,10 +464,6 @@ const Env = ({ headerStyle, isPhone, theme }: any) => {
       .filter((x) => selectedRowIds.includes(x.id))
       .map((x) => ({ value: x.value, name: x.name, remarks: x.remarks }));
     exportJson('env.json', JSON.stringify(envs));
-  };
-
-  const modifyName = () => {
-    setIsEditNameModalVisible(true);
   };
 
   const onSearch = (value: string) => {
@@ -496,87 +491,82 @@ const Env = ({ headerStyle, isPhone, theme }: any) => {
           loading={loading}
           onSearch={onSearch}
         />,
-        <Button key="2" type="primary" onClick={addEnv}>
+        <Button
+          type="primary"
+          onClick={handleClick}>
           新建变量
         </Button>,
       ]}
     >
-      {selectedRowIds.length > 0
-        && (
-          <div style={{ marginBottom: 16 }}>
-            <Button
-              type="primary"
-              style={{ marginBottom: 5 }}
-              onClick={modifyName}
-            >
-              批量修改变量名称
-            </Button>
-            <Button
-              type="primary"
-              style={{ marginBottom: 5, marginLeft: 8 }}
-              onClick={delEnvs}
-            >
-              批量删除
-            </Button>
-            <Button
-              type="primary"
-              onClick={() => exportEnvs()}
-              style={{ marginLeft: 8, marginRight: 8 }}
-            >
-              批量导出
-            </Button>
-            <Button
-              type="primary"
-              onClick={() => operateEnvs(0)}
-              style={{ marginLeft: 8, marginBottom: 5 }}
-            >
-              批量启用
-            </Button>
-            <Button
-              type="primary"
-              onClick={() => operateEnvs(1)}
-              style={{ marginLeft: 8, marginRight: 8 }}
-            >
-              批量禁用
-            </Button>
-            <span style={{ marginLeft: 8 }}>
-              已选择
-              <a>{selectedRowIds?.length}</a>项
-            </span>
-          </div>
-        )}
-      <DndProvider
-        backend={HTML5Backend}>
-        <Table
-          columns={columns}
-          rowSelection={rowSelection}
-          pagination={false}
-          dataSource={value}
-          rowKey="id"
-          size="middle"
-          scroll={{ x: 1000, y: tableScrollHeight }}
-          components={components}
-          loading={loading}
-          onRow={(record: any, index: number) => {
-            return {
-              index,
-              moveRow,
-            } as any;
-          }}
-        />
-      </DndProvider>
-      <EnvModal
-        visible={isModalVisible}
-        handleCancel={handleCancel}
-        env={editedEnv}
-      />
-      <EditNameModal
-        visible={isEditNameModalVisible}
-        handleCancel={handleEditNameCancel}
-        ids={selectedRowIds}
-      />
+      <Row gutter={[16, 16]}>
+        <Col span={24}>
+          {selectedRowIds.length > 0
+            && (
+              <Space>
+                <Button
+                  type="primary"
+                  onClick={() => deleteEnvs()}
+                >
+                  批量删除
+                </Button>
+                <Button
+                  type="primary"
+                  onClick={() => exportEnvs()}
+                >
+                  批量导出
+                </Button>
+                <Button
+                  type="primary"
+                  onClick={() => operateEnvs(0)}
+                >
+                  批量启用
+                </Button>
+                <Button
+                  type="primary"
+                  onClick={() => operateEnvs(1)}
+                >
+                  批量禁用
+                </Button>
+                <Typography.Text>
+                  已选择
+                  {selectedRowIds?.length}
+                  项
+                </Typography.Text>
+              </Space>
+            )}
+        </Col>
+        <Col span={24}>
+          <DndProvider
+            backend={HTML5Backend}>
+            <Table
+              columns={columns}
+              components={components}
+              dataSource={value}
+              loading={loading}
+              rowKey="id"
+              rowSelection={rowSelection}
+              scroll={{
+                scrollToFirstRowOnChange: true,
+                x: 1000,
+                y: tableScrollHeight
+              }}
+              onRow={(index: number) => {
+                return {
+                  index,
+                  moveRow,
+                };
+              }}
+            />
+          </DndProvider>
+          <EnvModal
+            visible={isModalVisible}
+            handleCancel={handleCancel}
+            env={editedEnv}
+          />
+        </Col>
+      </Row>
     </PageHeader>
   );
 };
 
-export default Env;
+export default Content;

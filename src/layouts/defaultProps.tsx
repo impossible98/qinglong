@@ -31,8 +31,8 @@ export default {
       },
       {
         name: '环境变量',
-        path: '/env',
-        component: '@/pages/Env/index',
+        path: '/environment',
+        component: '@/pages/Environment/index',
       },
       {
         path: '/config',

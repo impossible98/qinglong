@@ -1,21 +1,23 @@
+// import third-party modules
 import React, { useEffect, useState } from 'react';
-import { Modal, message, Input, Form, Radio } from 'antd';
+import { Form, Input, Modal } from 'antd';
+import { CloseOne } from '@icon-park/react';
+// import local modules
 import { request } from '@/utils/http';
 import config from '@/utils/config';
+import notify from "@/utils/notification";
 
-const EnvModal = ({
-  env,
-  handleCancel,
-  visible,
-}: {
+interface Props {
   env?: any;
   visible: boolean;
   handleCancel: (cks?: any[]) => void;
-}) => {
+}
+
+function EnvModal({ env, handleCancel: handleCancel, visible }: Props) {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
 
-  const handleOk = async (values: any) => {
+  async function handleOk(values: any) {
     setLoading(true);
     const { value, split, name, remarks } = values;
     const method = env ? 'put' : 'post';
@@ -41,9 +43,11 @@ const EnvModal = ({
         data: payload,
       });
       if (code === 200) {
-        message.success(env ? '更新变量成功' : '新建变量成功');
+        notify(env
+          ? '更新变量成功'
+          : '新建变量成功');
       } else {
-        message.error(data);
+        notify(data);
       }
       setLoading(false);
       handleCancel(data);
@@ -58,11 +62,14 @@ const EnvModal = ({
 
   return (
     <Modal
+      centered
+      closeIcon=<CloseOne theme="outline" size="16" fill="#333" />
+      confirmLoading={loading}
+      forceRender
+      maskClosable={false}
       title={env ? '编辑变量' : '新建变量'}
       visible={visible}
-      forceRender
-      centered
-      maskClosable={false}
+      onCancel={() => handleCancel()}
       onOk={() => {
         form
           .validateFields()
@@ -73,50 +80,54 @@ const EnvModal = ({
             console.log('Validate Failed:', info);
           });
       }}
-      onCancel={() => handleCancel()}
-      confirmLoading={loading}
     >
-      <Form form={form} layout="vertical" name="env_modal" initialValues={env}>
+      <Form
+        form={form}
+        initialValues={env}
+        layout="vertical"
+        name="env_modal"
+      >
         <Form.Item
-          name="name"
           label="名称"
+          name="name"
           rules={[
-            { required: true, message: '请输入环境变量名称', whitespace: true },
             {
-              pattern: /^[a-zA-Z_][0-9a-zA-Z_]*$/,
+              required: true,
+              message: '请输入环境变量名称',
+              whitespace: true
+            },
+            {
               message: '只能输入字母数字下划线，且不能以数字开头',
+              pattern: /^[a-zA-Z_][0-9a-zA-Z_]*$/,
             },
           ]}
         >
           <Input placeholder="请输入环境变量名称" />
         </Form.Item>
-        {!env && (
-          <Form.Item
-            name="split"
-            label="自动拆分"
-            initialValue="0"
-            tooltip="多个依赖是否换行分割"
-          >
-            <Radio.Group>
-              <Radio value="1">是</Radio>
-              <Radio value="0">否</Radio>
-            </Radio.Group>
-          </Form.Item>
-        )}
         <Form.Item
           name="value"
           label="值"
           rules={[
-            { required: true, message: '请输入环境变量值', whitespace: true },
+            {
+              required: true,
+              message: '请输入环境变量值',
+              whitespace: true
+            },
           ]}
         >
           <Input.TextArea
+            autoSize={{
+              minRows: 4,
+              maxRows: 4
+            }}
             rows={4}
-            autoSize={true}
             placeholder="请输入环境变量值"
           />
         </Form.Item>
-        <Form.Item name="remarks" label="备注">
+        <Form.Item
+          label="备注"
+          name="remark"
+        >
           <Input placeholder="请输入备注" />
         </Form.Item>
       </Form>
