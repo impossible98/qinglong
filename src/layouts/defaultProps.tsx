@@ -37,7 +37,7 @@ export default {
       {
         path: '/config',
         name: '配置文件',
-        component: '@/pages/config/index',
+        component: '@/pages/Config/index',
       },
       {
         path: '/script',
