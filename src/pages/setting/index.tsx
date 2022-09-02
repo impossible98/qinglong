@@ -7,6 +7,7 @@ import {
   Tabs,
   Table,
   Tooltip,
+  PageHeader,
   Space,
   Tag,
   Modal,
@@ -15,7 +16,6 @@ import {
   Input,
 } from 'antd';
 import config from '@/utils/config';
-import { PageContainer } from '@ant-design/pro-layout';
 import { request } from '@/utils/http';
 import * as DarkReader from '@umijs/ssr-darkreader';
 import AppModal from './appModal';
@@ -27,7 +27,6 @@ import {
 import SecuritySettings from './security';
 import LoginLog from './loginLog';
 import NotificationSetting from './notification';
-import CheckUpdate from './checkUpdate';
 
 const { Text } = Typography;
 const optionsWithDisabled = [
@@ -311,32 +310,37 @@ const Setting = ({
   };
 
   return (
-    <PageContainer
-      className="ql-container-wrapper"
+    <PageHeader
       title="系统设置"
-      header={{
-        style: headerStyle,
-      }}
       extra={
         tabActiveKey === 'app'
           ? [
-              <Button key="2" type="primary" onClick={() => addApp()}>
-                新建应用
-              </Button>,
-            ]
+            <Button
+              type="primary"
+              onClick={() => addApp()}>
+              新建应用
+            </Button>,
+          ]
           : []
       }
     >
       <Tabs
-        defaultActiveKey="security"
-        size="small"
-        tabPosition="top"
+        defaultActiveKey="1"
         onChange={tabChange}
       >
-        <Tabs.TabPane tab="安全设置" key="security">
-          <SecuritySettings user={user} userChange={reloadUser} />
+        <Tabs.TabPane
+          key="1"
+          tab="安全设置"
+        >
+          <SecuritySettings
+            user={user}
+            userChange={reloadUser}
+          />
         </Tabs.TabPane>
-        <Tabs.TabPane tab="应用设置" key="app">
+        <Tabs.TabPane
+          key="app"
+          tab="应用设置"
+        >
           <Table
             columns={columns}
             pagination={false}
@@ -347,18 +351,30 @@ const Setting = ({
             loading={loading}
           />
         </Tabs.TabPane>
-        <Tabs.TabPane tab="通知设置" key="notification">
+        <Tabs.TabPane
+          key="3"
+          tab="通知设置"
+        >
           <NotificationSetting data={notificationInfo} />
         </Tabs.TabPane>
-        <Tabs.TabPane tab="登录日志" key="login">
+        <Tabs.TabPane
+          key="4"
+          tab="登录日志"
+        >
           <LoginLog data={loginLogData} />
         </Tabs.TabPane>
-        <Tabs.TabPane tab="其他设置" key="other">
-          <Form layout="vertical" form={form}>
+        <Tabs.TabPane
+          key="5"
+          tab="其他设置"
+        >
+          <Form
+            form={form}
+            layout="vertical"
+          >
             <Form.Item
+              initialValue={defaultTheme}
               label="主题设置"
               name="theme"
-              initialValue={defaultTheme}
             >
               <Radio.Group
                 options={optionsWithDisabled}
@@ -387,9 +403,6 @@ const Setting = ({
                 </Button>
               </Input.Group>
             </Form.Item>
-            <Form.Item label="检查更新" name="update">
-              <CheckUpdate socketMessage={socketMessage} />
-            </Form.Item>
           </Form>
         </Tabs.TabPane>
       </Tabs>
@@ -398,7 +411,7 @@ const Setting = ({
         handleCancel={handleCancel}
         app={editedApp}
       />
-    </PageContainer>
+    </PageHeader>
   );
 };
 

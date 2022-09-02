@@ -1,3 +1,4 @@
+// import third-party modules
 import React, { useCallback, useRef, useState, useEffect } from 'react';
 import {
   Button,
@@ -493,7 +494,8 @@ const Content = ({ isPhone, theme }: any) => {
         />,
         <Button
           type="primary"
-          onClick={handleClick}>
+          onClick={handleClick}
+        >
           新建变量
         </Button>,
       ]}
