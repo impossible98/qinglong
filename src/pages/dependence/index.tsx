@@ -3,6 +3,7 @@ import {
   Button,
   message,
   Modal,
+  PageHeader,
   Table,
   Tag,
   Space,
@@ -12,19 +13,15 @@ import {
   Tabs,
 } from 'antd';
 import {
-  EditOutlined,
   DeleteOutlined,
-  SyncOutlined,
-  CheckCircleOutlined,
   DeleteFilled,
   BugOutlined,
   FileTextOutlined,
 } from '@ant-design/icons';
 import config from '@/utils/config';
-import { PageContainer } from '@ant-design/pro-layout';
 import { request } from '@/utils/http';
 import DependenceModal from './modal';
-import { DndProvider, useDrag, useDrop } from 'react-dnd';
+import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import './index.less';
 import { getTableScroll } from '@/utils/index';
@@ -48,7 +45,7 @@ enum StatusColor {
   'error',
 }
 
-const Dependence = ({ headerStyle, isPhone, socketMessage }: any) => {
+function Dependence({ headerStyle, isPhone, socketMessage }: any) {
   const columns: any = [
     {
       title: '序号',
@@ -337,7 +334,7 @@ const Dependence = ({ headerStyle, isPhone, socketMessage }: any) => {
       .finally(() => setLoading(false));
   };
 
-  const onSearch = (value: string) => {
+  function onSearch(value: string) {
     setSearchText(value.trim());
   };
 
@@ -443,8 +440,7 @@ const Dependence = ({ headerStyle, isPhone, socketMessage }: any) => {
   };
 
   return (
-    <PageContainer
-      className="ql-container-wrapper dependence-wrapper"
+    <PageHeader
       title="依赖管理"
       extra={[
         <Search
@@ -454,13 +450,14 @@ const Dependence = ({ headerStyle, isPhone, socketMessage }: any) => {
           loading={loading}
           onSearch={onSearch}
         />,
-        <Button key="2" type="primary" onClick={() => addDependence()}>
+        <Button
+          key="2"
+          type="primary"
+          onClick={addDependence}
+        >
           新建依赖
         </Button>,
       ]}
-      header={{
-        style: headerStyle,
-      }}
     >
       <Tabs
         defaultActiveKey="nodejs"
@@ -468,13 +465,19 @@ const Dependence = ({ headerStyle, isPhone, socketMessage }: any) => {
         tabPosition="top"
         onChange={onTabChange}
       >
-        <Tabs.TabPane tab="NodeJs" key="nodejs">
+        <Tabs.TabPane
+          tab="NodeJs"
+          key="nodejs">
           {panelContent()}
         </Tabs.TabPane>
-        <Tabs.TabPane tab="Python3" key="python3">
+        <Tabs.TabPane
+          tab="Python3"
+          key="python3">
           {panelContent()}
         </Tabs.TabPane>
-        <Tabs.TabPane tab="Linux" key="linux">
+        <Tabs.TabPane
+          tab="Linux"
+          key="linux">
           {panelContent()}
         </Tabs.TabPane>
       </Tabs>
@@ -502,7 +505,7 @@ const Dependence = ({ headerStyle, isPhone, socketMessage }: any) => {
         socketMessage={socketMessage}
         dependence={logDependence}
       />
-    </PageContainer>
+    </PageHeader>
   );
 };
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, message, Input, Form, Statistic, Button } from 'antd';
+import { Modal, Button } from 'antd';
 import { request } from '@/utils/http';
 import config from '@/utils/config';
 import {
@@ -136,10 +136,10 @@ const DependenceLogModal = ({
           style={
             isPhone
               ? {
-                  fontFamily: 'Source Code Pro',
-                  width: 375,
-                  zoom: 0.83,
-                }
+                fontFamily: 'Source Code Pro',
+                width: 375,
+                zoom: 0.83,
+              }
               : {}
           }
         >

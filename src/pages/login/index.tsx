@@ -1,13 +1,15 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Button,
   Row,
+  Image,
   Input,
   Form,
   message,
   notification,
   Statistic,
 } from 'antd';
+import { Checkbox } from 'antd';
 import config from '@/utils/config';
 import { history, Link } from 'umi';
 import styles from './index.less';
@@ -18,7 +20,7 @@ import { MobileOutlined } from '@ant-design/icons';
 const FormItem = Form.Item;
 const { Countdown } = Statistic;
 
-const Login = ({ reloadUser }: any) => {
+function Login({ reloadUser }: any) {
   const [loading, setLoading] = useState(false);
   const [waitTime, setWaitTime] = useState<any>();
   const { theme } = useTheme();
@@ -132,19 +134,27 @@ const Login = ({ reloadUser }: any) => {
     <div className={styles.container}>
       <div className={styles.top}>
         <div className={styles.header}>
-          <img
-            alt="logo"
-            className={styles.logo}
+          <Image
+            preview={false}
             src="http://qn.whyour.cn/logo.png"
+            width={32}
           />
           <span className={styles.title}>
-            {twoFactor ? '两步验证' : config.siteName}
+            {twoFactor
+              ? '两步验证'
+              : config.siteName}
           </span>
         </div>
       </div>
       <div className={styles.main}>
         {twoFactor ? (
-          <Form layout="vertical" onFinish={completeTowFactor}>
+          <Form
+            layout="vertical"
+            onFinish={completeTowFactor}
+            initialValues={{
+              remember: true
+            }}
+          >
             <FormItem
               name="code"
               label="验证码"
@@ -166,48 +176,88 @@ const Login = ({ reloadUser }: any) => {
             <Button
               type="primary"
               htmlType="submit"
-              style={{ width: '100%' }}
+              style={{
+                width: '100%'
+              }}
               loading={verifying}
             >
               验证
             </Button>
           </Form>
         ) : (
-          <Form layout="vertical" onFinish={handleOk}>
-            <FormItem name="username" label="用户名" hasFeedback>
-              <Input placeholder="用户名" autoFocus />
+          <Form
+            layout="vertical"
+            onFinish={handleOk}
+            initialValues={{
+              remember: true
+            }}
+          >
+            <FormItem
+              name="username"
+              label="用户名"
+              rules={[{
+                required: true,
+                message: 'Please input your username!'
+              }]}
+              hasFeedback>
+              <Input
+                placeholder="用户名"
+                autoFocus />
             </FormItem>
-            <FormItem name="password" label="密码" hasFeedback>
-              <Input type="password" placeholder="密码" />
+            <FormItem
+              name="password"
+              label="密码"
+              rules={[{
+                required: true,
+                message: 'Please input your password!'
+              }]}
+              hasFeedback>
+              <Input
+                type="password"
+                placeholder="密码" />
             </FormItem>
+            <Form.Item
+              name="remember"
+              valuePropName="checked"
+              wrapperCol={{
+                offset: 8,
+                span: 16
+              }}>
+              <Checkbox>Remember me</Checkbox>
+            </Form.Item>
             <Row>
-              {waitTime ? (
-                <Button type="primary" style={{ width: '100%' }} disabled>
-                  请
-                  <Countdown
-                    valueStyle={{
-                      color:
-                        theme === 'vs'
-                          ? 'rgba(0,0,0,.25)'
-                          : 'rgba(232, 230, 227, 0.25)',
-                    }}
-                    className="inline-countdown"
-                    onFinish={() => setWaitTime(null)}
-                    format="ss"
-                    value={Date.now() + 1000 * waitTime}
-                  />
-                  秒后重试
-                </Button>
-              ) : (
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  style={{ width: '100%' }}
-                  loading={loading}
-                >
-                  登录
-                </Button>
-              )}
+              {waitTime
+                ? (
+                  <Button
+                    type="primary"
+                    style={{ width: '100%' }}
+                    disabled>
+                    请
+                    <Countdown
+                      valueStyle={{
+                        color:
+                          theme === 'vs'
+                            ? 'rgba(0,0,0,.25)'
+                            : 'rgba(232, 230, 227, 0.25)',
+                      }}
+                      className="inline-countdown"
+                      onFinish={() => setWaitTime(null)}
+                      format="ss"
+                      value={Date.now() + 1000 * waitTime}
+                    />
+                    秒后重试
+                  </Button>
+                )
+                : (
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    style={{ width: '100%' }}
+                    loading={loading}
+                  >
+                    登录
+                  </Button>
+                )}
             </Row>
           </Form>
         )}

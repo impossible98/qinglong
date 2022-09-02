@@ -9,7 +9,7 @@ export default {
         name: '登录',
         path: '/login',
         hideInMenu: true,
-        component: '@/pages/login/index',
+        component: '@/pages/Login/index',
       },
       {
         name: '初始化',
@@ -57,7 +57,7 @@ export default {
         path: '/dependence',
         name: '依赖管理',
         icon: <Install theme="outline" size="16" fill="#333" />,
-        component: '@/pages/dependence/index',
+        component: '@/pages/Dependence/index',
       },
       {
         path: '/diff',
